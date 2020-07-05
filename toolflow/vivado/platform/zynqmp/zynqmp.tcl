@@ -421,6 +421,12 @@
     connect_bd_net $design_p_arstn \
       [get_bd_pins -of_objects $gp0_ic_tree -filter { TYPE == rst && DIR == I && NAME =~ "m_peripheral*" }]
 
+	#remove AXI-Offset
+	delete_bd_objs [get_bd_intf_nets host/S00_AXI_1] [get_bd_intf_nets host/S_HP0_1] [get_bd_cells host/HP0_offset]
+	connect_bd_intf_net [get_bd_intf_pins host/S_HP0] -boundary_type upper [get_bd_intf_pins host/HP0_offset_ic/S00_AXI]
+	delete_bd_objs [get_bd_intf_nets host/S00_AXI_2] [get_bd_intf_nets host/S_HP1_1] [get_bd_cells host/HP1_offset]
+	connect_bd_intf_net [get_bd_intf_pins host/S_HP1] -boundary_type upper [get_bd_intf_pins host/HP1_offset_ic/S00_AXI]
+
       save_bd_design
 
   }
