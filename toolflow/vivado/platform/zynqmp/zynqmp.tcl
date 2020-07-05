@@ -319,9 +319,12 @@
       set offset [tapasco::ip::create_axioffset "${n}_offset"]
       connect_bd_net [get_bd_pins $offset/CLK] $design_aclk
       connect_bd_net [get_bd_pins $offset/RST_N] $design_p_arstn
-      connect_bd_intf_net $s [get_bd_intf_pins $offset/S_AXI]
-      set bic [tapasco::ip::create_axi_ic "${n}_offset_ic" 1 1]
-      connect_bd_intf_net [get_bd_intf_pins $bic/S00_AXI] [get_bd_intf_pin $offset/M_AXI]
+      #connect_bd_intf_net $s [get_bd_intf_pins $offset/S_AXI]
+      #set bic [tapasco::ip::create_axi_ic "${n}_offset_ic" 1 1]
+      #connect_bd_intf_net [get_bd_intf_pins $bic/S00_AXI] [get_bd_intf_pin $offset/M_AXI]
+	# skip axi offset 
+	set bic [tapasco::ip::create_axi_ic "${n}_offset_ic" 1 1]
+	connect_bd_intf_net $s [get_bd_intf_pins $bic/S00_AXI]
       lappend mem_offsets [get_bd_intf_pin $bic/M00_AXI]
       connect_bd_net $mem_aclk \
         [get_bd_pins -of_objects $bic -filter { TYPE == clk && DIR == I && NAME !~ "S00_ACLK"}]
@@ -420,12 +423,6 @@
       [get_bd_pins -of_objects $gp0_ic_tree -filter { TYPE == rst && DIR == I && NAME =~ "m_interconnect*" }]
     connect_bd_net $design_p_arstn \
       [get_bd_pins -of_objects $gp0_ic_tree -filter { TYPE == rst && DIR == I && NAME =~ "m_peripheral*" }]
-
-	#remove AXI-Offset
-	delete_bd_objs [get_bd_intf_nets host/S00_AXI_1] [get_bd_intf_nets host/S_HP0_1] [get_bd_cells host/HP0_offset]
-	connect_bd_intf_net [get_bd_intf_pins host/S_HP0] -boundary_type upper [get_bd_intf_pins host/HP0_offset_ic/S00_AXI]
-	delete_bd_objs [get_bd_intf_nets host/S00_AXI_2] [get_bd_intf_nets host/S_HP1_1] [get_bd_cells host/HP1_offset]
-	connect_bd_intf_net [get_bd_intf_pins host/S_HP1] -boundary_type upper [get_bd_intf_pins host/HP1_offset_ic/S00_AXI]
 
       save_bd_design
 
